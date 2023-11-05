@@ -164,7 +164,7 @@ export default function Page() {
                         {hasNoTodos && (
                             <tr>
                                 <td colSpan={4} align="center">
-                                    Nenhum item encontrado
+                                    Nenhum item encontrado.
                                 </td>
                             </tr>
                         )}
