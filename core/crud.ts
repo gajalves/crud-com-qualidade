@@ -93,7 +93,7 @@ export function todoExists(id: string): boolean {
     return todos.some((todo) => todo.id === id);
 }
 
-function updateContentById(id: UUID, content: string): Todo {
+export function updateContentById(id: UUID, content: string): Todo {
     return update(id, {
         content,
     });
@@ -123,6 +123,6 @@ export function deleteById(id: UUID): boolean {
     return true;
 }
 
-function CLEAR_DB() {
+export function CLEAR_DB() {
     fs.writeFileSync(DB_FILE_PATH, "");
 }
