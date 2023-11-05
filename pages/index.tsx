@@ -124,7 +124,7 @@ export default function Page() {
                                             onClick={() =>
                                                 todoService
                                                     .deleteById(todo.id)
-                                                    .then((todosResponse) => {
+                                                    .then(() => {
                                                         setTodos(
                                                             (currentTodos) => {
                                                                 return currentTodos.filter(
