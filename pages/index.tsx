@@ -17,22 +17,26 @@ export default function Page() {
     const hasMorePages = totalPages > page;
     const hasNoTodos = todos.length === 0;
 
-    const homeTodos = todos.filter(todo => todo.content.toLocaleLowerCase().includes(searchTodo.toLocaleLowerCase()))
+    const homeTodos = todos.filter((todo) =>
+        todo.content
+            .toLocaleLowerCase()
+            .includes(searchTodo.toLocaleLowerCase())
+    );
 
     React.useEffect(() => {
-        if(!alreadyLoad) {
+        if (!alreadyLoad) {
             setAlreadyLoad(true);
-            todoService.getTodoWithPagination({ page, limit: 2})
-            .then((todosResponse) => {
-                setTodos(todosResponse.todos);
-                setTotalPages(todosResponse.totalPages);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+            todoService
+                .getTodoWithPagination({ page, limit: 2 })
+                .then((todosResponse) => {
+                    setTodos(todosResponse.todos);
+                    setTotalPages(todosResponse.totalPages);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
-
-    },[]);
+    }, []);
 
     return (
         <main>
@@ -45,23 +49,26 @@ export default function Page() {
                 <div className="typewriter">
                     <h1>O que fazer hoje?</h1>
                 </div>
-                <form onSubmit={async (event) => {
-                    event.preventDefault();
-                    if(newTodoContent) {
-                        const newTodo = await todoService.create({content: newTodoContent})
-                        setTodos((todos) => {
-                            return [...todos, newTodo]
-                        });
-                    }
-
-                }}>
-                    <input 
-                           name="add-todo"
-                           type="text" 
-                           placeholder="Correr, Estudar..." 
-                           onChange={function newTodoHandler(event) {
-                                setNewTodoContent(event.target.value);
-                           }}
+                <form
+                    onSubmit={async (event) => {
+                        event.preventDefault();
+                        if (newTodoContent) {
+                            const newTodo = await todoService.create({
+                                content: newTodoContent,
+                            });
+                            setTodos((todos) => {
+                                return [...todos, newTodo];
+                            });
+                        }
+                    }}
+                >
+                    <input
+                        name="add-todo"
+                        type="text"
+                        placeholder="Correr, Estudar..."
+                        onChange={function newTodoHandler(event) {
+                            setNewTodoContent(event.target.value);
+                        }}
                     />
                     <button
                         type="submit"
@@ -101,83 +108,115 @@ export default function Page() {
                             return (
                                 <tr key={todo.id}>
                                     <td>
-                                        <input type="checkbox" 
-                                        onChange={() => {
-                                            todoService.toggleDone(todo.id);
-                                        }}
-                                        defaultChecked={todo.done}/>
+                                        <input
+                                            type="checkbox"
+                                            onChange={() => {
+                                                todoService.toggleDone(todo.id);
+                                            }}
+                                            defaultChecked={todo.done}
+                                        />
                                     </td>
-                                    <td>{todo.id.substring(0,5)}</td>
-                                    <td>
-                                        {todo.content}
-                                    </td>
+                                    <td>{todo.id.substring(0, 5)}</td>
+                                    <td>{todo.content}</td>
                                     <td align="right">
-                                        <button data-type="delete"
-                                        onClick={() => 
-                                            todoService.deleteById(todo.id)
-                                            .then((todosResponse) => {
-                                                setTodos((currentTodos) => {
-                                                    return currentTodos.filter((current) => {
-                                                        return current.id !== todo.id
+                                        <button
+                                            data-type="delete"
+                                            onClick={() =>
+                                                todoService
+                                                    .deleteById(todo.id)
+                                                    .then((todosResponse) => {
+                                                        setTodos(
+                                                            (currentTodos) => {
+                                                                return currentTodos.filter(
+                                                                    (
+                                                                        current
+                                                                    ) => {
+                                                                        return (
+                                                                            current.id !==
+                                                                            todo.id
+                                                                        );
+                                                                    }
+                                                                );
+                                                            }
+                                                        );
                                                     })
-                                                });
-                                            })
-                                            }>Apagar</button>
+                                            }
+                                        >
+                                            Apagar
+                                        </button>
                                     </td>
                                 </tr>
-                            )
+                            );
                         })}
 
-                        {isLoading && <tr>
-                            <td
-                                colSpan={4}
-                                align="center"
-                                style={{ textAlign: "center" }}
-                            >
-                                Carregando...
-                            </td>
-                        </tr>}
+                        {isLoading && (
+                            <tr>
+                                <td
+                                    colSpan={4}
+                                    align="center"
+                                    style={{ textAlign: "center" }}
+                                >
+                                    Carregando...
+                                </td>
+                            </tr>
+                        )}
 
-                        {hasNoTodos && <tr>
-                            <td colSpan={4} align="center">
-                                Nenhum item encontrado
-                            </td>
-                        </tr>}
+                        {hasNoTodos && (
+                            <tr>
+                                <td colSpan={4} align="center">
+                                    Nenhum item encontrado
+                                </td>
+                            </tr>
+                        )}
 
-                        {hasMorePages &&(<tr>
-                            <td
-                                colSpan={4}
-                                align="center"
-                                style={{ textAlign: "center" }}
-                            >
-                                <button data-type="load-more" onClick={() => {
-                                    setIsLoading(true);
-                                    const nextPage = page + 1;
-                                    setPage(nextPage);
-                                    todoService.getTodoWithPagination({ page: nextPage, limit: 2})
-                                    .then((todosResponse) => {
-                                        setTodos((oldTodos) => {
-                                            return [...oldTodos, ...todosResponse.todos]
-                                        });
-                                        setTotalPages(todosResponse.totalPages);
-                                    })
-                                    .finally(() => {
-                                        setIsLoading(false);
-                                    });
-                                    }}>
-                                    Pagina {page}, Carregar mais{" "}
-                                    <span
-                                        style={{
-                                            display: "inline-block",
-                                            marginLeft: "4px",
-                                            fontSize: "1.2em",
+                        {hasMorePages && (
+                            <tr>
+                                <td
+                                    colSpan={4}
+                                    align="center"
+                                    style={{ textAlign: "center" }}
+                                >
+                                    <button
+                                        data-type="load-more"
+                                        onClick={() => {
+                                            setIsLoading(true);
+                                            const nextPage = page + 1;
+                                            setPage(nextPage);
+                                            todoService
+                                                .getTodoWithPagination({
+                                                    page: nextPage,
+                                                    limit: 2,
+                                                })
+                                                .then((todosResponse) => {
+                                                    setTodos((oldTodos) => {
+                                                        return [
+                                                            ...oldTodos,
+                                                            ...todosResponse.todos,
+                                                        ];
+                                                    });
+                                                    setTotalPages(
+                                                        todosResponse.totalPages
+                                                    );
+                                                })
+                                                .finally(() => {
+                                                    setIsLoading(false);
+                                                });
                                         }}
                                     >
-                                        ↓
-                                    </span>
-                                </button>
-                            </td>
-                        </tr>)}
+                                        Pagina {page}, Carregar mais{" "}
+                                        <span
+                                            style={{
+                                                display: "inline-block",
+                                                marginLeft: "4px",
+                                                fontSize: "1.2em",
+                                            }}
+                                        >
+                                            ↓
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </section>

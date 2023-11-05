@@ -11,7 +11,6 @@ export default async function handler(
     }
 
     if (request.method === "POST") {
-        console.log(request.body);
         await todoController.create(request, response);
         return;
     }

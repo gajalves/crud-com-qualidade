@@ -6,7 +6,6 @@ export default async function handler(
     response: NextApiResponse
 ) {
     if (request.method === "PUT") {
-        console.log(request.query);
         await todoController.toggleToDone(request, response);
         return;
     }

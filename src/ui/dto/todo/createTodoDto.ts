@@ -1,3 +1,3 @@
 export interface CreateTodoDto {
-    content: string
+    content: string;
 }

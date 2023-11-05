@@ -85,15 +85,13 @@ export function toggleToDone(id: UUID): Todo {
             2
         )
     );
-    
     return updatedTodo;
 }
 
-export function todoExists(id: string): Boolean {
+export function todoExists(id: string): boolean {
     const todos = read();
-    return todos.some(todo => todo.id === id);
+    return todos.some((todo) => todo.id === id);
 }
-
 
 function updateContentById(id: UUID, content: string): Todo {
     return update(id, {
@@ -101,7 +99,7 @@ function updateContentById(id: UUID, content: string): Todo {
     });
 }
 
-export function deleteById(id: UUID): Boolean {
+export function deleteById(id: UUID): boolean {
     const todos = read();
 
     const todosWithoutOne = todos.filter((todo) => {

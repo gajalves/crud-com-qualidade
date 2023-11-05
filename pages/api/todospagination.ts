@@ -5,11 +5,8 @@ export default function handler(
     request: NextApiRequest,
     response: NextApiResponse
 ) {
-    if (request.method === "GET" && 
-        request.query.limit && 
-        request.query.page) {
-
-        todoController.getWithPagination(request, response)
+    if (request.method === "GET" && request.query.limit && request.query.page) {
+        todoController.getWithPagination(request, response);
         return;
     }
 
